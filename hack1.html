@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusVoice</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+background:
+linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
+url("camp.jpeg");
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+flex-direction: column;
+
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:900px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(15px);
+padding:35px;
+border-radius:25px;
+box-shadow:0 8px 32px rgba(0,0,0,0.2);
+color:white;
+}
+
+.logo{
+text-align:center;
+margin-bottom:10px;
+font-size:38px;
+font-weight:700;
+}
+
+.tagline{
+text-align:center;
+margin-bottom:30px;
+opacity:0.9;
+}
+
+h2{
+margin-bottom:20px;
+}
+
+.categories{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:15px;
+margin-bottom:25px;
+}
+
+.card{
+background:rgba(255,255,255,0.15);
+padding:15px;
+border-radius:15px;
+cursor:pointer;
+text-align:center;
+transition:0.3s;
+border:2px solid transparent;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card.active{
+border:2px solid white;
+background:rgba(255,255,255,0.25);
+}
+
+select,
+textarea{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+margin-top:8px;
+margin-bottom:20px;
+font-size:15px;
+}
+
+textarea{
+height:130px;
+resize:none;
+}
+
+.counter{
+text-align:right;
+margin-top:-15px;
+margin-bottom:20px;
+font-size:13px;
+}
+
+button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:12px;
+font-size:18px;
+font-weight:600;
+background:white;
+color:#5b21b6;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+.badges{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-top:25px;
+flex-wrap:wrap;
+}
+
+.badge{
+background:rgba(255,255,255,0.15);
+padding:10px 15px;
+border-radius:30px;
+}
+
+.popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+color:#4f46e5;
+padding:25px;
+border-radius:20px;
+display:none;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.popup h3{
+margin-bottom:10px;
+}
+.container{
+animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.hero{
+text-align:center;
+margin-bottom:30px;
+}
+
+.hero h1{
+font-size:32px;
+margin-bottom:10px;
+}
+.footer{
+    text-align:center;
+    margin-top:20px;
+    color:white;
+    opacity:0.8;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">🎓 CampusVoice</div>
+
+<div class="tagline">
+Every Student Has a Voice. Every Institution Gains Insight.
+</div>
+<div class="hero">
+<h1>Transform Student Voices Into Institutional Growth</h1>
+<p>Anonymous • Secure • Actionable</p>
+</div>
+
+<h2>Anonymous Feedback Form</h2>
+
+<label>Select Category</label>
+
+<div class="categories">
+
+<div class="card" onclick="selectCategory(this,'Teaching Quality')">
+📚<br>Teaching
+</div>
+
+<div class="card" onclick="selectCategory(this,'Complaint')">
+⚠️<br>Complaint
+</div>
+
+<div class="card" onclick="selectCategory(this,'Suggestion')">
+💡<br>Suggestion
+</div>
+
+<div class="card" onclick="selectCategory(this,'Appreciation')">
+❤️<br>Appreciation
+</div>
+
+<div class="card" onclick="selectCategory(this,'Well-being')">
+🧠<br>Well-being
+</div>
+
+</div>
+
+<select id="department">
+<option>CSE</option>
+<option>ECE</option>
+<option>EEE</option>
+<option>MECH</option>
+<option>CIVIL</option>
+</select>
+
+<textarea id="feedback"
+placeholder="Share your thoughts anonymously..."
+maxlength="500"></textarea>
+
+<div class="counter">
+<span id="count">0</span>/500
+</div>
+
+<button onclick="submitFeedback()">
+🚀 Submit Feedback
+</button>
+<a href="moderator.html">
+<a href="login.html">
+<button>
+🔐 Open Dashboard Login
+</button>
+</a>
+
+<div class="badges">
+<div class="badge">🔒 100% Anonymous</div>
+<div class="badge">🛡 Moderated</div>
+<div class="badge">📊 Impact Driven</div>
+</div>
+
+</div>
+
+<div class="popup" id="popup">
+<h3>🎉 Thank You!</h3>
+<p>Your feedback has been submitted anonymously.</p>
+</div>
+<footer class="footer">
+    Developed by Team Innovators 🚀
+</footer>  
+<script>
+
+let selectedCategory="";
+
+function selectCategory(element,category){
+
+document.querySelectorAll('.card')
+.forEach(card=>card.classList.remove('active'));
+
+element.classList.add('active');
+
+selectedCategory=category;
+}
+
+const feedback=document.getElementById("feedback");
+
+feedback.addEventListener("input",()=>{
+
+document.getElementById("count").innerText=
+feedback.value.length;
+
+});
+
+function submitFeedback(){
+
+if(selectedCategory===""){
+alert("Please select a category");
+return;
+}
+const data={
+category:selectedCategory,
+department:document.getElementById("department").value,
+feedback:feedback.value,
+status:"Pending"
+};
+let allFeedback=
+JSON.parse(localStorage.getItem("campusvoice")) || [];
+
+allFeedback.push(data);
+
+localStorage.setItem(
+"campusvoice",
+JSON.stringify(allFeedback)
+);
+
+document.getElementById("popup").style.display="block";
+
+setTimeout(()=>{
+document.getElementById("popup").style.display="none";
+},2500);
+
+feedback.value="";
+document.getElementById("count").innerText="0";
+
+document.querySelectorAll('.card')
+.forEach(card=>card.classList.remove('active'));
+
+selectedCategory="";
+}
+function viewFeedback(){
+    alert("Admin Dashboard Coming Soon");
+}
+
+</script>
+
+</body>
+</html>
