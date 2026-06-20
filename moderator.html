@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CampusVoice Moderator Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f5f7ff;
+padding:30px;
+}
+
+/* HEADER */
+.header{
+text-align:center;
+margin-bottom:20px;
+}
+
+.header h1{
+color:#4f46e5;
+}
+
+/* CONTROLS (SEARCH + FILTER) */
+.controls{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.controls input,
+.controls select{
+padding:10px;
+border-radius:10px;
+border:1px solid #ccc;
+min-width:220px;
+outline:none;
+}
+
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.card h2{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.card p{
+color:gray;
+}
+
+.total{border-left:5px solid #4f46e5;}
+.pending{border-left:5px solid orange;}
+.approved{border-left:5px solid green;}
+.rejected{border-left:5px solid red;}
+
+/* TABLE */
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
+
+th{
+background:#4f46e5;
+color:white;
+padding:15px;
+}
+
+td{
+padding:15px;
+text-align:center;
+border-bottom:1px solid #eee;
+}
+
+/* BUTTONS */
+.approveBtn{
+background:green;
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:8px;
+cursor:pointer;
+margin-right:5px;
+}
+
+.rejectBtn{
+background:red;
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* STATUS COLORS */
+.statusApproved{color:green;font-weight:bold;}
+.statusRejected{color:red;font-weight:bold;}
+.statusPending{color:orange;font-weight:bold;}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<h1>🛡 CampusVoice Moderator Dashboard</h1>
+<p>Review and manage student feedback</p>
+</div>
+
+<!-- SEARCH + FILTER -->
+<div class="controls">
+
+<input type="text" id="searchBox" placeholder="Search department / feedback / category">
+
+<select id="statusFilter">
+<option value="all">All</option>
+<option value="Pending">Pending</option>
+<option value="Approved">Approved</option>
+<option value="Rejected">Rejected</option>
+</select>
+
+</div>
+
+<!-- STATS -->
+<div class="stats">
+
+<div class="card total">
+<h2 id="totalCount">0</h2>
+<p>Total Feedback</p>
+</div>
+
+<div class="card pending">
+<h2 id="pendingCount">0</h2>
+<p>Pending</p>
+</div>
+
+<div class="card approved">
+<h2 id="approvedCount">0</h2>
+<p>Approved</p>
+</div>
+
+<div class="card rejected">
+<h2 id="rejectedCount">0</h2>
+<p>Rejected</p>
+</div>
+
+</div>
+
+<!-- TABLE -->
+<table>
+
+<thead>
+<tr>
+<th>Category</th>
+<th>Department</th>
+<th>Feedback</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="feedbackTable"></tbody>
+
+</table>
+
+<!-- SCRIPT -->
+<script>
+
+let feedbacks = JSON.parse(localStorage.getItem("campusvoice")) || [];
+
+/* RENDER FUNCTION */
+function loadDashboard(){
+
+let table = document.getElementById("feedbackTable");
+table.innerHTML = "";
+
+/* GET SEARCH + FILTER VALUES */
+let searchValue = document.getElementById("searchBox").value.toLowerCase();
+let statusValue = document.getElementById("statusFilter").value;
+
+/* COUNTERS */
+let pending=0, approved=0, rejected=0;
+
+/* LOOP DATA */
+feedbacks.forEach((item,index)=>{
+
+if(!item.status) item.status="Pending";
+
+/* COUNT STATUS */
+if(item.status==="Pending") pending++;
+if(item.status==="Approved") approved++;
+if(item.status==="Rejected") rejected++;
+
+/* SEARCH CONDITION */
+let matchSearch =
+(item.department?.toLowerCase().includes(searchValue)) ||
+(item.feedback?.toLowerCase().includes(searchValue)) ||
+(item.category?.toLowerCase().includes(searchValue));
+
+/* FILTER CONDITION */
+let matchStatus =
+(statusValue==="all" || item.status===statusValue);
+
+/* SHOW ONLY MATCHED */
+if(matchSearch && matchStatus){
+
+table.innerHTML += `
+<tr>
+<td>${item.category}</td>
+<td>${item.department}</td>
+<td>${item.feedback}</td>
+<td class="status${item.status}">
+${item.status}
+</td>
+<td>
+<button class="approveBtn" onclick="approve(${index})">Approve</button>
+<button class="rejectBtn" onclick="reject(${index})">Reject</button>
+</td>
+</tr>
+`;
+}
+
+});
+
+/* UPDATE STATS */
+document.getElementById("totalCount").innerText = feedbacks.length;
+document.getElementById("pendingCount").innerText = pending;
+document.getElementById("approvedCount").innerText = approved;
+document.getElementById("rejectedCount").innerText = rejected;
+
+/* SAVE BACK */
+localStorage.setItem("campusvoice", JSON.stringify(feedbacks));
+}
+
+/* APPROVE */
+function approve(index){
+feedbacks[index].status = "Approved";
+localStorage.setItem("campusvoice", JSON.stringify(feedbacks));
+loadDashboard();
+}
+
+/* REJECT */
+function reject(index){
+feedbacks[index].status = "Rejected";
+localStorage.setItem("campusvoice", JSON.stringify(feedbacks));
+loadDashboard();
+}
+
+/* LIVE SEARCH + FILTER */
+document.getElementById("searchBox").addEventListener("input", loadDashboard);
+document.getElementById("statusFilter").addEventListener("change", loadDashboard);
+
+/* INIT */
+loadDashboard();
+
+</script>
+
+</body>
+</html>A
